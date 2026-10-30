@@ -10,7 +10,8 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:min(1vw,1.79vh);-
 *,*::before,*::after{box-sizing:inherit;margin:0}
 html,body{height:100%}
 body{background:#000;color:#fff;font-family:"Netflix Sans","Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-.stage{position:relative;height:100%}
+.stage{position:relative;height:100%;opacity:1;transition:opacity .8s ease}
+.stage.fade-out{opacity:0;pointer-events:none}
 .logo{position:absolute;left:5.2rem;top:6rem;color:#e50914;font:900 2rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;text-shadow:0 0 .6rem rgba(229,9,20,.55);transform:scaleX(.88);transform-origin:left}
 .main{position:absolute;left:0;right:0;top:calc(50% - 12.7rem);padding-bottom:6rem;display:flex;flex-direction:column;align-items:center}
 h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
@@ -36,7 +37,8 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .manage:hover,.manage:focus-visible{color:#fff;border-color:#fff}
 
 /* Title page */
-.tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;--sl:env(safe-area-inset-left,0px)}
+.tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;opacity:0;transition:opacity .4s ease;--sl:env(safe-area-inset-left,0px)}
+.tp.visible{opacity:1}
 .bd{position:absolute;inset:0;background:var(--photo,#fff)}
 .bd::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0,#000 20%,rgba(0,0,0,0) 72%),linear-gradient(0deg,#000 0,rgba(0,0,0,0) 8%)}
 .ph{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:300 10rem/1 Roboto,"Helvetica Neue",Arial,sans-serif;color:#a21fb2;white-space:nowrap}
@@ -187,14 +189,53 @@ document.querySelector('.go').addEventListener('click',addProfile);
 document.querySelector('.cancel').addEventListener('click',closeDlg);
 scrim.addEventListener('click',e=>{if(e.target===scrim)closeDlg()});
 const tp=document.querySelector('.tp'),tpTitle=document.getElementById('tpt'),bd=document.querySelector('.bd'),stage=document.querySelector('.stage');
+let lastProfileClick=null,lastProfileClickAt=0,isTransitioning=false;
 const openTitle=p=>{
+  if(isTransitioning)return;
+  isTransitioning=true;
   const v=p.dataset.wide?'url("'+p.dataset.wide+'") center/cover':'';
   tpTitle.textContent=p.querySelector('.name').textContent+' MEMORY LANE';
   bd.classList.toggle('has',!!v);
   if(v)bd.style.setProperty('--photo',v);else bd.style.removeProperty('--photo');
-  stage.hidden=true;tp.hidden=false};
-const closeTitle=()=>{tp.hidden=true;stage.hidden=false;const p=row.querySelector('.profile.on');if(p)p.focus()};
-row.addEventListener('click',ev=>{const p=ev.target.closest('.profile');if(p)openTitle(p)});
+
+  tp.classList.remove('visible');
+  stage.hidden=false;
+  stage.classList.remove('fade-out');
+  void stage.offsetWidth;
+  stage.classList.add('fade-out');
+
+  const finishFadeOut=ev=>{
+    if(ev.target!==stage||ev.propertyName!=='opacity')return;
+    stage.removeEventListener('transitionend',finishFadeOut);
+    stage.hidden=true;
+    stage.classList.remove('fade-out');
+    tp.hidden=false;
+    void tp.offsetWidth;
+    requestAnimationFrame(()=>tp.classList.add('visible'));
+  };
+  stage.addEventListener('transitionend',finishFadeOut);
+};
+const closeTitle=()=>{
+  tp.classList.remove('visible');
+  tp.hidden=true;
+  stage.hidden=false;
+  stage.classList.remove('fade-out');
+  isTransitioning=false;
+  const p=row.querySelector('.profile.on');
+  if(p)p.focus();
+};
+row.addEventListener('click',ev=>{
+  const p=ev.target.closest('.profile');
+  if(!p||isTransitioning){lastProfileClick=null;return}
+  const now=Date.now();
+  if(p===lastProfileClick&&now-lastProfileClickAt<=900){
+    lastProfileClick=null;
+    openTitle(p);
+  }else{
+    lastProfileClick=p;
+  }
+  lastProfileClickAt=now;
+});
 document.querySelector('.tp-logo').addEventListener('click',closeTitle);
 document.addEventListener('keydown',e=>{
   if(!tp.hidden){if(e.key==='Escape')closeTitle();return}
