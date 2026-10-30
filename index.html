@@ -38,8 +38,9 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 
 /* Title page */
 .tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;--sl:env(safe-area-inset-left,0px)}
-.foreground-reveal{position:absolute;inset:0;z-index:1;opacity:0;clip-path:inset(0 100% 0 0);will-change:opacity,clip-path;transition:opacity .4s ease,clip-path .75s cubic-bezier(.77,0,.175,1)}
-.foreground-reveal.revealed{opacity:1;clip-path:inset(0 0 0 0)}
+.foreground-reveal{position:absolute;inset:0;z-index:1;opacity:0;-webkit-mask-image:linear-gradient(to right,#000 0%,#000 48%,transparent 50%,transparent 100%);mask-image:linear-gradient(to right,#000 0%,#000 48%,transparent 50%,transparent 100%);-webkit-mask-size:200% 100%;mask-size:200% 100%;-webkit-mask-position:100% 0;mask-position:100% 0;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;will-change:opacity,mask-position;transition:opacity .4s ease,mask-position .75s cubic-bezier(.77,0,.175,1)}
+.foreground-reveal.revealed{opacity:1;-webkit-mask-position:0 0;mask-position:0 0}
+.foreground-reveal.reveal-complete{-webkit-mask-image:none;mask-image:none}
 .bd{position:absolute;inset:0;background:var(--photo,#fff)}
 .bd::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0,#000 20%,rgba(0,0,0,0) 72%),linear-gradient(0deg,#000 0,rgba(0,0,0,0) 8%)}
 .ph{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:300 10rem/1 Roboto,"Helvetica Neue",Arial,sans-serif;color:#a21fb2;white-space:nowrap}
@@ -192,6 +193,10 @@ document.querySelector('.go').addEventListener('click',addProfile);
 document.querySelector('.cancel').addEventListener('click',closeDlg);
 scrim.addEventListener('click',e=>{if(e.target===scrim)closeDlg()});
 const tp=document.querySelector('.tp'),tpTitle=document.getElementById('tpt'),bd=document.querySelector('.bd'),stage=document.querySelector('.stage');
+const foreground=document.querySelector('.foreground-reveal');
+foreground.addEventListener('transitionend',ev=>{
+  if(ev.propertyName.includes('mask-position')&&foreground.classList.contains('revealed'))foreground.classList.add('reveal-complete');
+});
 const REQUIRED_PROFILE_CLICKS=2;
 const PROFILE_CLICK_INTERVAL_MS=650;
 const profileTapProgress=new WeakMap();
@@ -204,7 +209,7 @@ const openTitle=p=>{
   bd.classList.toggle('has',!!v);
   if(v)bd.style.setProperty('--photo',v);else bd.style.removeProperty('--photo');
 
-  document.querySelector('.foreground-reveal').classList.remove('revealed');
+  foreground.classList.remove('revealed','reveal-complete');
   stage.hidden=false;
   stage.classList.remove('fade-out');
   void stage.offsetWidth;
@@ -218,13 +223,13 @@ const openTitle=p=>{
     tp.hidden=false;
     void tp.offsetWidth;
     requestAnimationFrame(()=>{
-      document.querySelector('.foreground-reveal').classList.add('revealed');
+      foreground.classList.add('revealed');
     });
   };
   stage.addEventListener('transitionend',finishFadeOut);
 };
 const closeTitle=()=>{
-  document.querySelector('.foreground-reveal').classList.remove('revealed');
+  foreground.classList.remove('revealed','reveal-complete');
   tp.hidden=true;
   stage.hidden=false;
   stage.classList.remove('fade-out');
