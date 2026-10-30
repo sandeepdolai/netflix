@@ -190,8 +190,9 @@ document.querySelector('.cancel').addEventListener('click',closeDlg);
 scrim.addEventListener('click',e=>{if(e.target===scrim)closeDlg()});
 const tp=document.querySelector('.tp'),tpTitle=document.getElementById('tpt'),bd=document.querySelector('.bd'),stage=document.querySelector('.stage');
 const REQUIRED_PROFILE_CLICKS=4;
-const PROFILE_CLICK_WINDOW_MS=2000;
-let lastProfileClick=null,lastProfileClickAt=0,profileClickCount=0,isTransitioning=false;
+const PROFILE_CLICK_INTERVAL_MS=650;
+const profileTapProgress=new WeakMap();
+let lastTappedProfile=null,isTransitioning=false;
 const openTitle=p=>{
   if(isTransitioning)return;
   isTransitioning=true;
@@ -223,29 +224,36 @@ const closeTitle=()=>{
   stage.hidden=false;
   stage.classList.remove('fade-out');
   isTransitioning=false;
-  profileClickCount=0;
-  lastProfileClick=null;
+  lastTappedProfile=null;
   const p=row.querySelector('.profile.on');
   if(p)p.focus();
 };
 row.addEventListener('click',ev=>{
   const p=ev.target.closest('.profile');
   if(!p||isTransitioning){
-    lastProfileClick=null;
-    profileClickCount=0;
+    if(lastTappedProfile)profileTapProgress.set(lastTappedProfile,{count:0,time:0});
+    lastTappedProfile=null;
     return;
   }
-  const now=Date.now();
-  if(p===lastProfileClick&&now-lastProfileClickAt<=PROFILE_CLICK_WINDOW_MS){
-    profileClickCount+=1;
-  }else{
-    lastProfileClick=p;
-    profileClickCount=1;
+
+  // A tap on another profile interrupts the current sequence.
+  if(lastTappedProfile&&lastTappedProfile!==p){
+    profileTapProgress.set(lastTappedProfile,{count:0,time:0});
   }
-  lastProfileClickAt=now;
-  if(profileClickCount>=REQUIRED_PROFILE_CLICKS){
-    profileClickCount=0;
-    lastProfileClick=null;
+
+  const now=Date.now();
+  const previous=profileTapProgress.get(p);
+  const count=previous&&now-previous.time<=PROFILE_CLICK_INTERVAL_MS
+    ? previous.count+1
+    : 1;
+
+  profileTapProgress.set(p,{count,time:now});
+  lastTappedProfile=p;
+
+  // Any pause longer than the interval starts a fresh sequence.
+  if(count>=REQUIRED_PROFILE_CLICKS){
+    profileTapProgress.set(p,{count:0,time:0});
+    lastTappedProfile=null;
     openTitle(p);
   }
 });
