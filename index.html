@@ -37,8 +37,8 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .manage:hover,.manage:focus-visible{color:#fff;border-color:#fff}
 
 /* Title page */
-.tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;opacity:0;transition:opacity .4s ease;--sl:env(safe-area-inset-left,0px)}
-.tp.visible{opacity:1}
+.tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;opacity:0;clip-path:inset(0 100% 0 0);will-change:opacity,clip-path;transition:opacity .4s ease,clip-path .75s cubic-bezier(.77,0,.175,1);--sl:env(safe-area-inset-left,0px)}
+.tp.visible{opacity:1;clip-path:inset(0 0 0 0)}
 .bd{position:absolute;inset:0;background:var(--photo,#fff)}
 .bd::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0,#000 20%,rgba(0,0,0,0) 72%),linear-gradient(0deg,#000 0,rgba(0,0,0,0) 8%)}
 .ph{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:300 10rem/1 Roboto,"Helvetica Neue",Arial,sans-serif;color:#a21fb2;white-space:nowrap}
