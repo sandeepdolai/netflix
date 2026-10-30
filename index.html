@@ -295,6 +295,7 @@ const overviewTab=document.querySelector('[data-view="overview"]');
 const moreLikeTab=document.querySelector('[data-view="more"]');
 const infoPanel=document.querySelector('.info');
 const photoPlaceholder=document.querySelector('.ph');
+let recommendationChangeToken=0;
 
 const setMemoryView=view=>{
   const showMore=view==='more';
@@ -326,14 +327,38 @@ const renderMoreLikeThis=()=>{
     card.append(art,caption,subtitle);
 
     card.addEventListener('click',()=>{
-      tpTitle.textContent=year+' MEMORY LANE';
       const wide=profile.dataset.wide||'';
-      bd.classList.toggle('has',!!wide);
-      if(wide)bd.style.setProperty('--photo','url("'+wide+'") center/cover');
-      else bd.style.removeProperty('--photo');
-      photoPlaceholder.textContent='Photo '+year;
-      on(profile);
+      const token=++recommendationChangeToken;
+
+      // Close More Like This straight away and reset the foreground reveal.
       setMemoryView('overview');
+      foreground.classList.remove('revealed');
+      infoPanel.hidden=true;
+      on(profile);
+
+      const showSelectedProfile=()=>{
+        if(token!==recommendationChangeToken)return;
+        tpTitle.textContent=year+' MEMORY LANE';
+        bd.classList.toggle('has',!!wide);
+        if(wide)bd.style.setProperty('--photo','url("'+wide+'") center/cover');
+        else bd.style.removeProperty('--photo');
+        photoPlaceholder.textContent='Photo '+year;
+        infoPanel.hidden=false;
+
+        // Replay the feathered wipe + fade for the newly selected profile.
+        void foreground.offsetWidth;
+        requestAnimationFrame(()=>foreground.classList.add('revealed'));
+      };
+
+      if(wide){
+        const preload=new Image();
+        preload.onload=showSelectedProfile;
+        preload.onerror=showSelectedProfile;
+        preload.src=wide;
+        if(preload.complete&&preload.naturalWidth>0)showSelectedProfile();
+      }else{
+        showSelectedProfile();
+      }
     });
     recommendationRow.append(card);
   });
