@@ -161,7 +161,7 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 <script>
 const row=document.querySelector('.row'),addBtn=document.querySelector('.add');
 const on=p=>row.querySelectorAll('.profile').forEach(x=>x.classList.toggle('on',x===p));
-['pointerover','focusin','click'].forEach(e=>row.addEventListener(e,ev=>{const p=ev.target.closest('.profile');if(p)on(p)}));
+['pointerover','focusin'].forEach(e=>row.addEventListener(e,ev=>{const p=ev.target.closest('.profile');if(p)on(p)}));
 const scrim=document.querySelector('.scrim'),yearIn=document.getElementById('year'),fileIn=document.getElementById('file'),pick=document.querySelector('.pick'),err=document.querySelector('.err');
 let photo='',wide='';
 const openDlg=()=>{photo='';wide='';fileIn.value='';yearIn.value='';err.textContent='';pick.classList.remove('has');pick.style.backgroundImage='';scrim.classList.add('open');yearIn.focus()};
@@ -242,22 +242,24 @@ row.addEventListener('click',ev=>{
     return;
   }
 
-  // A tap on another profile interrupts the current sequence.
+  // A tap always selects this profile. Opening is reserved for the second rapid tap.
+  on(p);
+
+  // Switching profiles interrupts the previous profile's tap sequence.
   if(lastTappedProfile&&lastTappedProfile!==p){
     profileTapProgress.set(lastTappedProfile,{count:0,time:0});
   }
 
   const now=Date.now();
   const previous=profileTapProgress.get(p);
-  const count=previous&&now-previous.time<=PROFILE_CLICK_INTERVAL_MS
-    ? previous.count+1
-    : 1;
+  const isContinuous=previous&&now-previous.time<=PROFILE_CLICK_INTERVAL_MS;
+  const count=isContinuous?previous.count+1:1;
 
   profileTapProgress.set(p,{count,time:now});
   lastTappedProfile=p;
 
-  // Any pause longer than the interval starts a fresh sequence.
-  if(count>=REQUIRED_PROFILE_CLICKS){
+  // Tap one only selects. Tap two opens and starts the fade + feathered wipe.
+  if(count===REQUIRED_PROFILE_CLICKS){
     profileTapProgress.set(p,{count:0,time:0});
     lastTappedProfile=null;
     openTitle(p);
