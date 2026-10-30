@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Memory Lane — Your Yearly Memories</title>
+<title>Who’s watching?</title>
 <style>
 :root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:min(1vw,1.79vh);-webkit-text-size-adjust:100%}
 *,*::before,*::after{box-sizing:inherit;margin:0}
 html,body{height:100%}
-body{background:#000;color:#fff;font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+body{background:#000;color:#fff;font-family:"Netflix Sans","Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 .stage{position:relative;height:100%;opacity:1;transition:opacity .8s ease}
 .stage.fade-out{opacity:0;pointer-events:none}
-.logo{position:absolute;left:5.2rem;top:6rem;color:#a98bff;font:800 1.9rem/1 Inter,"Helvetica Neue",Arial,sans-serif;letter-spacing:.04em;text-shadow:0 0 .8rem rgba(169,139,255,.28)}
+.logo{position:absolute;left:5.2rem;top:6rem;color:#e50914;font:900 2rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;text-shadow:0 0 .6rem rgba(229,9,20,.55);transform:scaleX(.88);transform-origin:left}
 .main{position:absolute;left:0;right:0;top:calc(50% - 12.7rem);padding-bottom:6rem;display:flex;flex-direction:column;align-items:center}
 h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .row{display:flex;flex-wrap:wrap;justify-content:center;row-gap:3rem;max-width:98rem;margin-top:4.8rem}
@@ -35,7 +35,6 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 
 .manage{all:unset;box-sizing:border-box;margin-top:5.9rem;padding:.6rem 2.4rem;border:.13rem solid #4d4d4d;color:#999;font-size:1.25rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .2s,border-color .2s}
 .manage:hover,.manage:focus-visible{color:#fff;border-color:#fff}
-.notice{margin-top:2.2rem;max-width:42rem;text-align:center;font-size:1.05rem;line-height:1.6;color:#666}
 
 /* Title page */
 .tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;opacity:0;transition:opacity .4s ease;--sl:env(safe-area-inset-left,0px)}
@@ -46,18 +45,18 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .bd.has .ph{display:none}
 .nav{position:absolute;z-index:1;left:calc(1.6rem + var(--sl));top:calc(.6rem + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:1.2rem;font-size:1.25rem;color:#e5e5e5;text-shadow:0 0 .6rem rgba(0,0,0,.7);white-space:nowrap}
 .nav .cur{font-weight:700;color:#fff}
-.tp-logo{all:unset;margin-right:1.9rem;color:#a98bff;font:800 2rem/1 Inter,"Helvetica Neue",Arial,sans-serif;letter-spacing:.02em;text-shadow:0 0 .8rem rgba(169,139,255,.28);cursor:pointer}
+.tp-logo{all:unset;margin-right:1.9rem;color:#e50914;font:900 2.4rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;transform:scaleX(.88);transform-origin:left;text-shadow:0 0 .6rem rgba(229,9,20,.55);cursor:pointer}
 .info{position:absolute;z-index:1;left:calc(2.1rem + var(--sl));top:10.9rem}
 .ser{display:flex;align-items:center;gap:.8rem}
-.ser b{display:grid;place-items:center;width:3.4rem;height:3.4rem;border:1px solid rgba(169,139,255,.65);border-radius:.7rem;color:#a98bff;font:800 1.2rem/1 Inter,"Helvetica Neue",Arial,sans-serif}
+.ser b{color:#e50914;font:900 3.4rem/1 Impact,"Arial Narrow",sans-serif}
 .ser span{font-size:1.4rem;font-weight:500;letter-spacing:.3em;color:#e5e5e5}
 .tp h2{margin-top:2.4rem;font-size:3.8rem;font-weight:700;line-height:1;white-space:nowrap}
 .rate{display:flex;align-items:center;gap:.8rem;margin-top:2.4rem;font-size:1.2rem}
-.rate i{font-style:normal;color:#f3c969;font-size:1.4rem;letter-spacing:.05rem}
+.rate i{font-style:normal;color:#e50914;font-size:1.1rem;letter-spacing:.15rem}
 .desc{margin-top:.8rem;font-size:1.5rem;line-height:1.85rem;font-weight:600;white-space:nowrap}
 .acts{display:flex;align-items:center;gap:.8rem;margin-top:1.1rem}
 .pl,.ml{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:.8rem;height:3rem;font-size:1.15rem;font-weight:700;border-radius:.3rem;cursor:pointer}
-.pl{width:9rem;background:#7660c9}
+.pl{width:7.5rem;background:#e50914}
 .pl i{display:block;border-left:.9rem solid #fff;border-top:.55rem solid transparent;border-bottom:.55rem solid transparent}
 .ml{width:9.4rem;background:rgba(0,0,0,.6);border:.2rem solid #d0d0d0}
 .ci{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:2.3rem;height:2.3rem;border:.13rem solid #888;border-radius:50%;color:#ddd;cursor:pointer}
@@ -69,7 +68,7 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .meta b{color:#8a8a8a}
 .tabs{position:absolute;z-index:1;left:calc(32rem + var(--sl));bottom:calc(1.4rem + env(safe-area-inset-bottom,0px));display:flex;gap:3.4rem;font-size:1.25rem;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 .6rem rgba(0,0,0,.8)}
 .tabs span{padding-bottom:.4rem;border-bottom:.25rem solid transparent}
-.tabs .act{font-weight:700;border-color:#a98bff}
+.tabs .act{font-weight:700;border-color:#e50914}
 
 /* Add-profile dialog */
 .scrim{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:2rem;background:rgba(0,0,0,.86)}
@@ -108,9 +107,9 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 </head>
 <body>
 <div class="stage">
-  <div class="logo">MEMORY LANE</div>
+  <div class="logo">NETFLIX</div>
   <main class="main">
-    <h1>Which year would you like to revisit?</h1>
+    <h1>Who’s watching?</h1>
     <div class="row">
       <button class="profile on"><span class="avatar" style="--a:#1c3a3d;--b:#c9b79c"></span><span class="name">2023</span></button>
       <button class="profile"><span class="avatar" style="--a:#d4492b;--b:#f2b24a"></span><span class="name">2025</span></button>
@@ -119,28 +118,27 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
       <button class="add" aria-label="Add profile"><i></i></button>
     </div>
     <button class="manage">Manage profiles</button>
-    <p class="notice">An independent personal memory project. Not an official streaming service.</p>
   </main>
 </div>
-<section class="tp" hidden aria-label="Memory Lane">
+<section class="tp" hidden aria-label="Series">
   <div class="bd"><span class="ph">Photo 1</span></div>
   <header class="nav">
-    <button class="tp-logo" aria-label="Back to profiles">MEMORY LANE</button>
-    <span class="cur">Overview</span><span>Your Years</span><span>Highlights</span><span>Photos</span><span>Timeline</span><span>About</span>
+    <button class="tp-logo" aria-label="Back to profiles">NETFLIX</button>
+    <span class="cur">Home</span><span>TV Programmes</span><span>Films</span><span>Originals</span><span>Recently Added</span><span>My List</span>
   </header>
   <div class="info">
-    <div class="ser"><b>ML</b><span>YOUR MEMORIES</span></div>
-    <h2 id="tpt">2025 — MY MEMORIES</h2>
-    <div class="rate"><i>♥</i><span>A collection of moments worth remembering</span></div>
+    <div class="ser"><b>N</b><span>SERIES</span></div>
+    <h2 id="tpt">2025 MEMORY LANE</h2>
+    <div class="rate"><i>★★★★★</i><span>Little moments, big memories</span></div>
     <p class="desc">Dear world, I am grateful to be alive in you,<br>and I am thankful for another year of better times<br>and even better memories with the ones I love.</p>
     <div class="acts">
-      <button class="pl"><i></i>VIEW YEAR</button>
-      <button class="ml">+ FAVORITES</button>
+      <button class="pl"><i></i>PLAY</button>
+      <button class="ml">+ MY LIST</button>
       <button class="ci" aria-label="Like"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
       <button class="ci dn" aria-label="Dislike"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
     </div>
     <span class="av"></span>
-    <div class="meta"><div><b>Collection:</b> Personal memories</div><div><b>Started:</b> 27-05-2021</div></div>
+    <div class="meta"><div><b>Starring:</b> 27-05-2021</div><div><b>Genres:</b> ACTION &amp; CRIME</div></div>
   </div>
   <nav class="tabs"><span class="act">Overview</span><span>Episodes</span><span>More like this</span><span>Trailers &amp; more</span></nav>
 </section>
@@ -199,7 +197,7 @@ const openTitle=p=>{
   if(isTransitioning)return;
   isTransitioning=true;
   const v=p.dataset.wide?'url("'+p.dataset.wide+'") center/cover':'';
-  tpTitle.textContent=p.querySelector('.name').textContent+' — MY MEMORIES';
+  tpTitle.textContent=p.querySelector('.name').textContent+' MEMORY LANE';
   bd.classList.toggle('has',!!v);
   if(v)bd.style.setProperty('--photo',v);else bd.style.removeProperty('--photo');
 
