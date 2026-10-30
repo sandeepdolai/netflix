@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who’s watching?</title>
+<style>
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:min(1vw,1.79vh);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:inherit;margin:0}
+html,body{height:100%}
+body{background:#000;color:#fff;font-family:"Netflix Sans","Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.stage{position:relative;height:100%}
+.logo{position:absolute;left:5.2rem;top:6rem;color:#e50914;font:900 2rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;text-shadow:0 0 .6rem rgba(229,9,20,.55);transform:scaleX(.88);transform-origin:left}
+.main{position:absolute;left:0;right:0;top:calc(50% - 12.7rem);padding-bottom:6rem;display:flex;flex-direction:column;align-items:center}
+h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
+.row{display:flex;flex-wrap:wrap;justify-content:center;row-gap:3rem;max-width:98rem;margin-top:4.8rem}
+
+/* Profile tiles. For a real photo, add to a tile's style attribute:  --photo:url(photos/2023.jpg) center/cover */
+.profile{all:unset;box-sizing:border-box;width:14rem;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.avatar{--ph:radial-gradient(ellipse 14% 14% at 50% 36%,rgba(255,255,255,.5) 0 96%,transparent 100%),radial-gradient(ellipse 29% 24% at 50% 82%,rgba(255,255,255,.5) 0 97%,transparent 100%),linear-gradient(145deg,var(--a),var(--b));width:9.6rem;height:9.6rem;border-radius:.4rem;background:var(--photo,var(--ph));background-size:cover;transition:transform .2s ease}
+.profile.on .avatar{transform:scale(1.15)}
+.profile:focus-visible .avatar{outline:.25rem solid #fff;outline-offset:.2rem}
+.name{margin-top:1.3rem;font-size:2rem;line-height:1.3;color:#8c8c8c;transition:color .2s}
+.profile.on .name{color:#fff}
+
+/* Add profile */
+.add{all:unset;box-sizing:border-box;width:14rem;height:9.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.add i{position:relative;width:6.5rem;height:6.5rem;border-radius:50%;background:#6a6a6a;transition:background .2s,transform .2s}
+.add i::before,.add i::after{content:"";position:absolute;left:50%;top:50%;background:#eee;transform:translate(-50%,-50%)}
+.add i::before{width:2.2rem;height:.4rem}
+.add i::after{width:.4rem;height:2.2rem}
+.add:hover i,.add:focus-visible i{background:#8a8a8a;transform:scale(1.1)}
+
+.manage{all:unset;box-sizing:border-box;margin-top:5.9rem;padding:.6rem 2.4rem;border:.13rem solid #4d4d4d;color:#999;font-size:1.25rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .2s,border-color .2s}
+.manage:hover,.manage:focus-visible{color:#fff;border-color:#fff}
+
+/* Title page */
+.tp{position:fixed;inset:0;z-index:2;overflow:hidden;background:#000;color:#fff;--sl:env(safe-area-inset-left,0px)}
+.bd{position:absolute;inset:0;background:var(--photo,#fff)}
+.bd::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000 0,#000 20%,rgba(0,0,0,0) 72%),linear-gradient(0deg,#000 0,rgba(0,0,0,0) 8%)}
+.ph{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:300 10rem/1 Roboto,"Helvetica Neue",Arial,sans-serif;color:#a21fb2;white-space:nowrap}
+.bd.has .ph{display:none}
+.nav{position:absolute;z-index:1;left:calc(1.6rem + var(--sl));top:calc(.6rem + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:1.2rem;font-size:1.25rem;color:#e5e5e5;text-shadow:0 0 .6rem rgba(0,0,0,.7);white-space:nowrap}
+.nav .cur{font-weight:700;color:#fff}
+.tp-logo{all:unset;margin-right:1.9rem;color:#e50914;font:900 2.4rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;transform:scaleX(.88);transform-origin:left;text-shadow:0 0 .6rem rgba(229,9,20,.55);cursor:pointer}
+.info{position:absolute;z-index:1;left:calc(2.1rem + var(--sl));top:10.9rem}
+.ser{display:flex;align-items:center;gap:.8rem}
+.ser b{color:#e50914;font:900 3.4rem/1 Impact,"Arial Narrow",sans-serif}
+.ser span{font-size:1.4rem;font-weight:500;letter-spacing:.3em;color:#e5e5e5}
+.tp h2{margin-top:2.4rem;font-size:3.8rem;font-weight:700;line-height:1;white-space:nowrap}
+.rate{display:flex;align-items:center;gap:.8rem;margin-top:2.4rem;font-size:1.2rem}
+.rate i{font-style:normal;color:#e50914;font-size:1.1rem;letter-spacing:.15rem}
+.desc{margin-top:.8rem;font-size:1.5rem;line-height:1.85rem;font-weight:600;white-space:nowrap}
+.acts{display:flex;align-items:center;gap:.8rem;margin-top:1.1rem}
+.pl,.ml{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:.8rem;height:3rem;font-size:1.15rem;font-weight:700;border-radius:.3rem;cursor:pointer}
+.pl{width:7.5rem;background:#e50914}
+.pl i{display:block;border-left:.9rem solid #fff;border-top:.55rem solid transparent;border-bottom:.55rem solid transparent}
+.ml{width:9.4rem;background:rgba(0,0,0,.6);border:.2rem solid #d0d0d0}
+.ci{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:2.3rem;height:2.3rem;border:.13rem solid #888;border-radius:50%;color:#ddd;cursor:pointer}
+.ci svg{width:1.2rem;height:1.2rem;fill:currentColor}
+.ci.dn svg{transform:scaleY(-1)}
+.pl:focus-visible,.ml:focus-visible,.ci:focus-visible,.tp-logo:focus-visible{outline:.25rem solid #fff;outline-offset:.2rem}
+.av{display:block;width:2.6rem;height:2.6rem;margin-top:2.1rem;border:.15rem solid #8a8a8a;border-radius:50%;background:#444}
+.meta{margin-top:1.8rem;font-size:1.05rem;line-height:1.55rem;color:#6e6e6e}
+.meta b{color:#8a8a8a}
+.tabs{position:absolute;z-index:1;left:calc(32rem + var(--sl));bottom:calc(1.4rem + env(safe-area-inset-bottom,0px));display:flex;gap:3.4rem;font-size:1.25rem;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 .6rem rgba(0,0,0,.8)}
+.tabs span{padding-bottom:.4rem;border-bottom:.25rem solid transparent}
+.tabs .act{font-weight:700;border-color:#e50914}
+
+/* Add-profile dialog */
+.scrim{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:2rem;background:rgba(0,0,0,.86)}
+.scrim.open{display:flex}
+.dlg{width:min(46rem,94vw);max-height:100%;overflow:auto;padding:3rem;background:#141414;border:.13rem solid #333;border-radius:.5rem}
+.dlg h2{font-size:3rem;font-weight:500;line-height:1.2;color:#f2f2f2}
+.dlg p{margin-top:.6rem;font-size:1.6rem;color:#8c8c8c}
+.fields{display:flex;align-items:center;gap:2.4rem;margin-top:2.4rem}
+.pick{all:unset;box-sizing:border-box;flex:none;width:12rem;height:12rem;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.5rem;color:#999;background:#1f1f1f center/cover;border:.2rem dashed #555;border-radius:.4rem;cursor:pointer}
+.pick:hover,.pick:focus-visible{border-color:#fff;color:#fff}
+.pick:focus-visible{outline:.25rem solid #fff;outline-offset:.2rem}
+.pick.has{border-style:solid;border-color:transparent;color:transparent}
+.field{flex:1;min-width:0}
+.field label{font-size:1.5rem;color:#8c8c8c}
+.field input{display:block;width:100%;margin-top:.8rem;padding:1.1rem 1.4rem;font:inherit;font-size:2rem;color:#fff;background:#333;border:.13rem solid #808080;border-radius:.3rem;outline:none}
+.field input:focus{border-color:#fff}
+.err{min-height:2rem;margin-top:1.4rem;font-size:1.5rem;color:#e87c03}
+.btns{display:flex;gap:1.4rem;margin-top:1rem}
+.btn{all:unset;box-sizing:border-box;padding:1rem 2.8rem;font-size:1.8rem;font-weight:500;color:#fff;border:.13rem solid #808080;border-radius:.3rem;cursor:pointer}
+.btn.go{color:#000;background:#fff;border-color:#fff}
+.btn:hover{border-color:#fff}
+.btn:focus-visible{outline:.25rem solid #fff;outline-offset:.2rem}
+
+@media (max-aspect-ratio:1/1){
+  html{font-size:2.6vw}
+  .main{top:15rem}
+  h1{font-size:3.4rem;text-align:center}
+  .row{width:28rem;flex-wrap:wrap;row-gap:3rem}
+  .manage{margin-top:4rem}
+  .tp h2{font-size:3rem}
+  .desc{font-size:1.25rem;line-height:1.6rem}
+  .tabs{left:2rem;overflow-x:auto;max-width:calc(100% - 4rem)}
+  .ph{font-size:8rem}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="logo">NETFLIX</div>
+  <main class="main">
+    <h1>Who’s watching?</h1>
+    <div class="row">
+      <button class="profile on"><span class="avatar" style="--a:#1c3a3d;--b:#c9b79c"></span><span class="name">2023</span></button>
+      <button class="profile"><span class="avatar" style="--a:#d4492b;--b:#f2b24a"></span><span class="name">2025</span></button>
+      <button class="profile"><span class="avatar" style="--a:#5b3fa8;--b:#4b8fd6"></span><span class="name">2024</span></button>
+      <button class="profile"><span class="avatar" style="--a:#6b4a33;--b:#d9a98a"></span><span class="name">2022</span></button>
+      <button class="add" aria-label="Add profile"><i></i></button>
+    </div>
+    <button class="manage">Manage profiles</button>
+  </main>
+</div>
+<section class="tp" hidden aria-label="Series">
+  <div class="bd"><span class="ph">Photo 1</span></div>
+  <header class="nav">
+    <button class="tp-logo" aria-label="Back to profiles">NETFLIX</button>
+    <span class="cur">Home</span><span>TV Programmes</span><span>Films</span><span>Originals</span><span>Recently Added</span><span>My List</span>
+  </header>
+  <div class="info">
+    <div class="ser"><b>N</b><span>SERIES</span></div>
+    <h2 id="tpt">2025 MEMORY LANE</h2>
+    <div class="rate"><i>★★★★★</i><span>Little moments, big memories</span></div>
+    <p class="desc">Dear world, I am grateful to be alive in you,<br>and I am thankful for another year of better times<br>and even better memories with the ones I love.</p>
+    <div class="acts">
+      <button class="pl"><i></i>PLAY</button>
+      <button class="ml">+ MY LIST</button>
+      <button class="ci" aria-label="Like"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
+      <button class="ci dn" aria-label="Dislike"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
+    </div>
+    <span class="av"></span>
+    <div class="meta"><div><b>Starring:</b> 27-05-2021</div><div><b>Genres:</b> ACTION &amp; CRIME</div></div>
+  </div>
+  <nav class="tabs"><span class="act">Overview</span><span>Episodes</span><span>More like this</span><span>Trailers &amp; more</span></nav>
+</section>
+<div class="scrim" role="dialog" aria-modal="true" aria-labelledby="dt">
+  <div class="dlg">
+    <h2 id="dt">Add profile</h2>
+    <p>Add a year and a photo for this profile.</p>
+    <div class="fields">
+      <button type="button" class="pick">Add photo</button>
+      <div class="field"><label for="year">Year</label><input id="year" type="number" inputmode="numeric" min="1900" max="2100" placeholder="2026"></div>
+    </div>
+    <input id="file" type="file" accept="image/*" hidden>
+    <div class="err" role="alert"></div>
+    <div class="btns"><button type="button" class="btn go">Add</button><button type="button" class="btn cancel">Cancel</button></div>
+  </div>
+</div>
+<script>
+const row=document.querySelector('.row'),addBtn=document.querySelector('.add');
+const on=p=>row.querySelectorAll('.profile').forEach(x=>x.classList.toggle('on',x===p));
+['pointerover','focusin','click'].forEach(e=>row.addEventListener(e,ev=>{const p=ev.target.closest('.profile');if(p)on(p)}));
+const scrim=document.querySelector('.scrim'),yearIn=document.getElementById('year'),fileIn=document.getElementById('file'),pick=document.querySelector('.pick'),err=document.querySelector('.err');
+let photo='',wide='';
+const openDlg=()=>{photo='';wide='';fileIn.value='';yearIn.value='';err.textContent='';pick.classList.remove('has');pick.style.backgroundImage='';scrim.classList.add('open');yearIn.focus()};
+const closeDlg=()=>{scrim.classList.remove('open');addBtn.focus()};
+const make=(y,img)=>{
+  const b=document.createElement('button'),a=document.createElement('span'),n=document.createElement('span'),h=(y*47)%360;
+  b.className='profile';a.className='avatar';n.className='name';n.textContent=y;
+  a.style.setProperty('--a','hsl('+h+' 45% 24%)');a.style.setProperty('--b','hsl('+((h+40)%360)+' 55% 58%)');
+  if(img)a.style.setProperty('--photo','url("'+img+'") center/cover');
+  b.append(a,n);return b};
+const addProfile=()=>{
+  const y=Number(yearIn.value);
+  if(!Number.isInteger(y)||y<1900||y>2100){err.textContent='Enter a year between 1900 and 2100.';yearIn.focus();return}
+  const b=make(y,photo);b.dataset.wide=wide;row.insertBefore(b,addBtn);on(b);closeDlg()};
+addBtn.addEventListener('click',openDlg);
+pick.addEventListener('click',()=>fileIn.click());
+fileIn.addEventListener('change',()=>{
+  const f=fileIn.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();
+    im.onload=()=>{const s=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=256;
+      c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,256,256);
+      photo=c.toDataURL('image/jpeg',.85);const k=Math.min(1,1280/im.width),w=document.createElement('canvas');w.width=Math.round(im.width*k);w.height=Math.round(im.height*k);w.getContext('2d').drawImage(im,0,0,w.width,w.height);wide=w.toDataURL('image/jpeg',.8);pick.style.backgroundImage='url("'+photo+'")';pick.classList.add('has');err.textContent=''};
+    im.onerror=()=>{err.textContent='That file can’t be read as an image.'};
+    im.src=r.result};
+  r.readAsDataURL(f)});
+document.querySelector('.go').addEventListener('click',addProfile);
+document.querySelector('.cancel').addEventListener('click',closeDlg);
+scrim.addEventListener('click',e=>{if(e.target===scrim)closeDlg()});
+const tp=document.querySelector('.tp'),tpTitle=document.getElementById('tpt'),bd=document.querySelector('.bd'),stage=document.querySelector('.stage');
+const openTitle=p=>{
+  const v=p.dataset.wide?'url("'+p.dataset.wide+'") center/cover':'';
+  tpTitle.textContent=p.querySelector('.name').textContent+' MEMORY LANE';
+  bd.classList.toggle('has',!!v);
+  if(v)bd.style.setProperty('--photo',v);else bd.style.removeProperty('--photo');
+  stage.hidden=true;tp.hidden=false};
+const closeTitle=()=>{tp.hidden=true;stage.hidden=false;const p=row.querySelector('.profile.on');if(p)p.focus()};
+row.addEventListener('click',ev=>{const p=ev.target.closest('.profile');if(p)openTitle(p)});
+document.querySelector('.tp-logo').addEventListener('click',closeTitle);
+document.addEventListener('keydown',e=>{
+  if(!tp.hidden){if(e.key==='Escape')closeTitle();return}
+  if(!scrim.classList.contains('open'))return;
+  if(e.key==='Escape')closeDlg();else if(e.key==='Enter'&&e.target===yearIn)addProfile()});
+</script>
+</body>
+</html>
