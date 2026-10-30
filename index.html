@@ -577,6 +577,17 @@ row.addEventListener('click',ev=>{
     openTitle(p);
   }
 });
+row.addEventListener('contextmenu',ev=>{
+  const p=ev.target.closest('.profile');
+  if(!p)return;
+  ev.preventDefault();
+  if(isTransitioning)return;
+  on(p);
+  if(lastTappedProfile)profileTapProgress.set(lastTappedProfile,{count:0,time:0});
+  profileTapProgress.set(p,{count:0,time:0});
+  lastTappedProfile=null;
+  openTitle(p);
+});
 document.querySelector('.tp-logo').addEventListener('click',closeTitle);
 document.addEventListener('keydown',e=>{
   if(!playerScreen.hidden){if(e.key==='Escape')closePlayer();return}
