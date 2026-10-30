@@ -189,7 +189,9 @@ document.querySelector('.go').addEventListener('click',addProfile);
 document.querySelector('.cancel').addEventListener('click',closeDlg);
 scrim.addEventListener('click',e=>{if(e.target===scrim)closeDlg()});
 const tp=document.querySelector('.tp'),tpTitle=document.getElementById('tpt'),bd=document.querySelector('.bd'),stage=document.querySelector('.stage');
-let lastProfileClick=null,lastProfileClickAt=0,isTransitioning=false;
+const REQUIRED_PROFILE_CLICKS=4;
+const PROFILE_CLICK_WINDOW_MS=2000;
+let lastProfileClick=null,lastProfileClickAt=0,profileClickCount=0,isTransitioning=false;
 const openTitle=p=>{
   if(isTransitioning)return;
   isTransitioning=true;
@@ -221,20 +223,31 @@ const closeTitle=()=>{
   stage.hidden=false;
   stage.classList.remove('fade-out');
   isTransitioning=false;
+  profileClickCount=0;
+  lastProfileClick=null;
   const p=row.querySelector('.profile.on');
   if(p)p.focus();
 };
 row.addEventListener('click',ev=>{
   const p=ev.target.closest('.profile');
-  if(!p||isTransitioning){lastProfileClick=null;return}
-  const now=Date.now();
-  if(p===lastProfileClick&&now-lastProfileClickAt<=900){
+  if(!p||isTransitioning){
     lastProfileClick=null;
-    openTitle(p);
+    profileClickCount=0;
+    return;
+  }
+  const now=Date.now();
+  if(p===lastProfileClick&&now-lastProfileClickAt<=PROFILE_CLICK_WINDOW_MS){
+    profileClickCount+=1;
   }else{
     lastProfileClick=p;
+    profileClickCount=1;
   }
   lastProfileClickAt=now;
+  if(profileClickCount>=REQUIRED_PROFILE_CLICKS){
+    profileClickCount=0;
+    lastProfileClick=null;
+    openTitle(p);
+  }
 });
 document.querySelector('.tp-logo').addEventListener('click',closeTitle);
 document.addEventListener('keydown',e=>{
