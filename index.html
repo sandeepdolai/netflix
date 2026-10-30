@@ -10,7 +10,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);font-size:min(1vw,1.79vh);-
 *,*::before,*::after{box-sizing:inherit;margin:0}
 html,body{height:100%}
 body{background:#000;color:#fff;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-.stage{position:relative;height:100%;opacity:1;transition:opacity .8s ease}
+.stage{position:relative;z-index:3;height:100%;opacity:1;transition:opacity .8s ease}
 .stage.fade-out{opacity:0;pointer-events:none}
 .logo{position:absolute;left:5.2rem;top:6rem;color:#e50914;font:900 2rem/1 Impact,"Arial Narrow",sans-serif;letter-spacing:.03em;text-shadow:0 0 .6rem rgba(229,9,20,.55);transform:scaleX(.88);transform-origin:left}
 .main{position:absolute;left:0;right:0;top:calc(50% - 12.7rem);padding-bottom:6rem;display:flex;flex-direction:column;align-items:center}
@@ -208,19 +208,21 @@ const openTitle=p=>{
   foreground.classList.remove('revealed');
   stage.hidden=false;
   stage.classList.remove('fade-out');
-  void stage.offsetWidth;
-  stage.classList.add('fade-out');
+  tp.hidden=false;
+  void tp.offsetWidth;
+
+  // Start both transitions together on tap two: the old profile screen fades
+  // away while the new page's foreground wipes in behind it.
+  requestAnimationFrame(()=>{
+    foreground.classList.add('revealed');
+    stage.classList.add('fade-out');
+  });
 
   const finishFadeOut=ev=>{
     if(ev.target!==stage||ev.propertyName!=='opacity')return;
     stage.removeEventListener('transitionend',finishFadeOut);
     stage.hidden=true;
     stage.classList.remove('fade-out');
-    tp.hidden=false;
-    void tp.offsetWidth;
-    requestAnimationFrame(()=>{
-      foreground.classList.add('revealed');
-    });
   };
   stage.addEventListener('transitionend',finishFadeOut);
 };
