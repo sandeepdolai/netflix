@@ -85,7 +85,7 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 .pick:hover,.pick:focus-visible{border-color:#fff;color:#fff}
 .pick:focus-visible{outline:.25rem solid #fff;outline-offset:.2rem}
 .pick.has{border-style:solid;border-color:transparent;color:transparent}
-.field{flex:1;min-width:0}
+.field-stack{flex:1;min-width:0;display:flex;flex-direction:column;gap:1.2rem}.field{flex:1;min-width:0}
 .field label{font-size:1.5rem;color:#8c8c8c}
 .field input{display:block;width:100%;margin-top:.8rem;padding:1.1rem 1.4rem;font:inherit;font-size:2rem;color:#fff;background:#333;border:.13rem solid #808080;border-radius:.3rem;outline:none}
 .field input:focus{border-color:#fff}
@@ -246,7 +246,10 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
     <p>Add a year and a photo for this profile.</p>
     <div class="fields">
       <button type="button" class="pick">Add photo</button>
-      <div class="field"><label for="year">Year</label><input id="year" type="number" inputmode="numeric" min="1900" max="2100" placeholder="2026"></div>
+      <div class="field-stack">
+        <div class="field"><label for="year">Year</label><input id="year" type="number" inputmode="numeric" min="1900" max="2100" placeholder="2026"></div>
+        <div class="field"><label for="heroTitle">Hero Title</label><input id="heroTitle" type="text" maxlength="80" placeholder="Write your hero title"></div>
+      </div>
     </div>
     <input id="file" type="file" accept="image/*" hidden>
     <div class="err" role="alert"></div>
@@ -257,20 +260,21 @@ h1{font-size:4.1rem;font-weight:500;line-height:1.2;color:#f2f2f2}
 const row=document.querySelector('.row'),addBtn=document.querySelector('.add');
 const on=p=>row.querySelectorAll('.profile').forEach(x=>x.classList.toggle('on',x===p));
 ['pointerover','focusin'].forEach(e=>row.addEventListener(e,ev=>{const p=ev.target.closest('.profile');if(p)on(p)}));
-const scrim=document.querySelector('.scrim'),yearIn=document.getElementById('year'),fileIn=document.getElementById('file'),pick=document.querySelector('.pick'),err=document.querySelector('.err');
+const scrim=document.querySelector('.scrim'),yearIn=document.getElementById('year'),heroTitleIn=document.getElementById('heroTitle'),fileIn=document.getElementById('file'),pick=document.querySelector('.pick'),err=document.querySelector('.err');
 let photo='',wide='';
-const openDlg=()=>{photo='';wide='';fileIn.value='';yearIn.value='';err.textContent='';pick.classList.remove('has');pick.style.backgroundImage='';scrim.classList.add('open');yearIn.focus()};
+const openDlg=()=>{photo='';wide='';fileIn.value='';yearIn.value='';heroTitleIn.value='';err.textContent='';pick.classList.remove('has');pick.style.backgroundImage='';scrim.classList.add('open');yearIn.focus()};
 const closeDlg=()=>{scrim.classList.remove('open');addBtn.focus()};
-const make=(y,img)=>{
+const make=(y,img,heroTitle)=>{
   const b=document.createElement('button'),a=document.createElement('span'),n=document.createElement('span'),h=(y*47)%360;
   b.className='profile';a.className='avatar';n.className='name';n.textContent=y;
   a.style.setProperty('--a','hsl('+h+' 45% 24%)');a.style.setProperty('--b','hsl('+((h+40)%360)+' 55% 58%)');
   if(img)a.style.setProperty('--photo','url("'+img+'") center/cover');
+  if(heroTitle)b.dataset.heroTitle=heroTitle;
   b.append(a,n);return b};
 const addProfile=()=>{
   const y=Number(yearIn.value);
   if(!Number.isInteger(y)||y<1900||y>2100){err.textContent='Enter a year between 1900 and 2100.';yearIn.focus();return}
-  const b=make(y,photo);b.dataset.wide=wide;row.insertBefore(b,addBtn);on(b);closeDlg()};
+  const b=make(y,photo,heroTitleIn.value.trim());b.dataset.wide=wide;row.insertBefore(b,addBtn);on(b);closeDlg()};
 addBtn.addEventListener('click',openDlg);
 pick.addEventListener('click',()=>fileIn.click());
 fileIn.addEventListener('change',()=>{
@@ -338,7 +342,7 @@ const renderMoreLikeThis=()=>{
 
       const showSelectedProfile=()=>{
         if(token!==recommendationChangeToken)return;
-        tpTitle.textContent=year+' MEMORY LANE';
+        tpTitle.textContent=profile.dataset.heroTitle||year+' MEMORY LANE';
         bd.classList.toggle('has',!!wide);
         if(wide)bd.style.setProperty('--photo','url("'+wide+'") center/cover');
         else bd.style.removeProperty('--photo');
@@ -445,7 +449,7 @@ const openTitle=p=>{
   const token=++activeOpenToken;
   const photoSource=p.dataset.wide||'';
   const v=photoSource?'url("'+photoSource+'") center/cover':'';
-  tpTitle.textContent=p.querySelector('.name').textContent+' MEMORY LANE';
+  tpTitle.textContent=p.dataset.heroTitle||p.querySelector('.name').textContent+' MEMORY LANE';
   setMemoryView('overview');
   bd.classList.toggle('has',!!v);
   if(v)bd.style.setProperty('--photo',v);else bd.style.removeProperty('--photo');
